@@ -4,12 +4,12 @@ import StationItemCard from './Components/StationItemCard';
 import {useEffect, useState} from 'react';
 import { StationApi } from './shared/Api/OpenApi';
 import StationsList from './Components/StationsList';
+import TrainStationsMap from "./Components/TrainStationsMap";
 
 
 function App() {
 
   const [stations, setStations] = useState(null);
-  // const [filter, setFilter] = useState("");
 
   useEffect(() => {
       const interval = setInterval(async () => {
@@ -44,23 +44,27 @@ function App() {
       return () => clearInterval(interval);
     }, [])
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-
-      <div >
-        <StationsList stations={stations ? stations.slice(0,10) : null}/>
-      </div>
-      
-      {/* 
-      <div id="map" ref={mapElement}>
-        <div id="popup" className="ol-popup rubik-400">
-          <div id="popup-content"></div>
+    return (
+      <div className="app-wrapper">
+        <header className="app-header">
+          <h1>Я.Прибывалка</h1>
+        </header>
+    
+        <div className="app-container">
+          <div className="stations-container">
+            <h1>Список станций</h1>
+            <StationsList stations={stations ? stations.slice(0, 10) : null} />
+          </div>
+    
+          <div className="map-container">
+            <h1>Карта станций</h1>
+            <TrainStationsMap stations={stations} />
+          </div>
         </div>
-      </div> 
-      */}
-
-    </div>
-  );
+      </div>
+    );
+    
+    
 }
 
 
