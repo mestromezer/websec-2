@@ -2,9 +2,20 @@ import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-dotenv.config();
+import cors from 'cors';
+
+/*var corsOptions = {
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "optionsSuccessStatus": 200
+}*/
 
 const app = express();
+
+app.use(cors());
+
+dotenv.config();
+
 const PORT = process.env.PORT || 7777;
 const YANDEX_API_KEY = process.env.YANDEX_API_KEY;
 const YANDEX_API_URL = 'https://api.rasp.yandex.net/v3.0';
