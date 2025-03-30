@@ -71,3 +71,53 @@
   justify-content: center;
   align-items: center;
 }
+
+#map {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Стили для попапа */
+.ol-popup {
+  position: absolute;
+  background: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  font-family: "Arial", sans-serif;
+  color: #333;
+  max-width: 280px;
+}
+
+.ol-popup:after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+.station-marker {
+  width: 24px;
+  height: 24px;
+  background: #fc3f1d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.station-marker:hover {
+  transform: scale(1.1);
+}

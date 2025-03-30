@@ -13,7 +13,7 @@ const StationItemCard = (props) => {
             <div className="station-card__right-content">
                 <button
                     className="right-content__show-on-map-button"
-                    onClick={() => props.showOnMapHandler(props.yandex_code)}>
+                    onClick={() => props.showOnMapHandler(props.data.title)}>
                     Показать на карте
                 </button>
             </div>

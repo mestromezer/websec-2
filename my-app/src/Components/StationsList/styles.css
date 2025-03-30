@@ -1,0 +1,21 @@
+.stations-page__stations-list-container {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.no-results {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-top: 10px;
+}
