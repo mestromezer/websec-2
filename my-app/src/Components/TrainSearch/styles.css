@@ -1,0 +1,66 @@
+.stations-page__stations-list-container {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.select-container {
+    display: flex;
+    flex-direction: column; /* Ставим поля друг под другом */
+    gap: 10px; /* Расстояние между элементами */
+    margin-bottom: 10px;
+}
+
+
+.station-select {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.scrollable-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.station-item-card {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.no-results {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-top: 10px;
+}

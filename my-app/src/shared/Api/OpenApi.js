@@ -1,7 +1,6 @@
 class BaseApi {
 
     basePath = `http://localhost:${process.env.REACT_APP_SERVER_PORT ?? 7777}/`;
-    apiKey = process.env.REACT_APP_API_KEY;
 
     constructor(basePath) {
         if (basePath) this.basePath = basePath
@@ -21,8 +20,6 @@ class BaseApi {
         if (url.startsWith('/')) url = url.slice(1);
 
         const requestUrl = new URLSearchParams();
-
-        this.apiKey && requestUrl.append('apikey', this.apiKey);
 
         if (data) {
             Object.keys(data).forEach(key => {
@@ -46,13 +43,16 @@ export class StationApi extends BaseApi {
 
 
     getSchedule(station) {
-        return this.sendRequest('GET', "schedule?", { station: station, format: 'json', lang: "ru_RU" })
+        const today = (new Date()).toISOString().split('T')[0]
+        return this.sendRequest('GET', "schedule?", { station: station.codes.yandex_code, format: 'json', lang: "ru_RU", date: today })
             .then(response => {
                 return response.json().then((r) => { return r; })
             })
     }
+      
 
-    before2Sations(from, to) {
+    search(from, to) {
+        //const today = (new Date()).toISOString().split('T')[0]
         return this.sendRequest('GET', "search?", { from: from, to: to, format: 'json', lang: "ru_RU", transport_types: "train" })
             .then(response => {
                 return response.json().then((r) => {

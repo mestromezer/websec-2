@@ -9,8 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+var corsOptions = {
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "optionsSuccessStatus": 200
+}
+
 const PORT = process.env.PORT || 7777;
-const YANDEX_API_KEY = process.env.YANDEX_API_KEY;
+const YANDEX_API_KEY = 'd67aac14-fddc-4533-8b6b-a89a21584ad4';//process.env.YANDEX_API_KEY;
 const YANDEX_API_URL = 'https://api.rasp.yandex.net/v3.0';
 
 const cache = {
@@ -24,7 +30,7 @@ if (!YANDEX_API_KEY) {
   process.exit(1);
 }
 
-app.get('/stations', async (req, res) => {
+app.get('/stations',  async (req, res) => {
   try {
     const { lang } = req.query;
 
@@ -48,66 +54,30 @@ app.get('/stations', async (req, res) => {
   }
 });
 
-app.get('/schedule', async (req, res) => {
-  try {
-    const { station, date, transport_types, event } = req.query;
-    if (!station) {
-      return res.status(400).json({ error: 'Не указан station' });
+app.get("/schedule", async (req, res) => {
+    try {
+        req.query.apikey = YANDEX_API_KEY;
+        const requestUrl = new URLSearchParams(req.query);
+        const response = await fetch(`${YANDEX_API_URL}/schedule/?` + requestUrl.toString());
+        const data = await response.json();
+        return res.json(data);
+    } catch (error) {
+        console.error("Ошибка запроса к API:", error);
+        res.status(500).json({ error: "Ошибка сервера" });
     }
-
-    const cacheKey = `${station}-${date || new Date().toISOString().split('T')[0]}`;
-    if (cache.schedule[cacheKey]) {
-      console.log('Ответ из кеша (schedule)');
-      return res.json(cache.schedule[cacheKey]);
-    }
-
-    const response = await axios.get(`${YANDEX_API_URL}/schedule/`, {
-      params: {
-        apikey: YANDEX_API_KEY,
-        station,
-        date: date || new Date().toISOString().split('T')[0],
-        transport_types,
-        event
-      }
-    });
-
-    cache.schedule[cacheKey] = response.data;
-
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
-app.get('/route', async (req, res) => {
+app.get('/search',  async (req, res) => {
   try {
-    const { from, to, date, transport_types } = req.query;
-    if (!from || !to) {
-      return res.status(400).json({ error: 'Не указаны from и to' });
-    }
-
-    const cacheKey = `${from}-${to}-${date || new Date().toISOString().split('T')[0]}`;
-    if (cache.route[cacheKey]) {
-      console.log('Ответ из кеша (route)');
-      return res.json(cache.route[cacheKey]);
-    }
-
-    const response = await axios.get(`${YANDEX_API_URL}/search/`, {
-      params: {
-        apikey: YANDEX_API_KEY,
-        from,
-        to,
-        date: date || new Date().toISOString().split('T')[0],
-        transport_types
-      }
-    });
-
-    cache.route[cacheKey] = response.data;
-
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    req.query.apikey = YANDEX_API_KEY;
+    const requestUrl = new URLSearchParams(req.query);
+    const response = await fetch(`${YANDEX_API_URL}/search/?` + requestUrl.toString());
+    const data = await response.json();
+    return res.json(data);
+} catch (error) {
+    console.error("Ошибка запроса к API:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+}
 });
 
 app.listen(PORT, () => {

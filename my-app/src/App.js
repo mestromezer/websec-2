@@ -2,6 +2,8 @@ import './App.css';
 import { StationApi } from './shared/Api/OpenApi';
 import StationsList from './Components/StationsList';
 import MapPopup from './Components/MapPopup';
+import TrainStationSchedule from './Components/TrainStationSchedule';
+import TrainSearch from "./Components/TrainSearch";
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Map, Overlay, View } from 'ol';
@@ -19,29 +21,39 @@ import trainStationIcon from './/Components/assets/trainStation.svg'; // Ико�
 
 function App() {
   const [stations, setStations] = useState([]);
+  const [selectedStation, setSelectedStation] = useState(null);
   const [popupContent, setPopupContent] = useState('');
   const mapElement = useRef(null);
   const mapRef = useRef(null);
   const popupRef = useRef(null);
+  const [viewMode, setViewMode] = useState("stations");
 
   const fetchStations = async () => {
     const stationsApi = new StationApi();
     const res = await stationsApi.getAllStations();
     if (res && res.countries) {
-      const ruRegions = res.countries.find((elem) => elem.title === 'Россия').regions;
+      const ruRegions = res.countries.find(
+        (elem) => elem.title === 'Россия'
+      ).regions;
       const allStations = ruRegions
-        .reduce((acc, currItem) => [
-          ...acc,
-          ...currItem.settlements.reduce((acc, currItem) => [
+        .reduce(
+          (acc, currItem) => [
             ...acc,
-            ...currItem.stations,
-          ], []),
-        ], [])
-        .filter((item) => item.transport_type === 'train' && item.codes.esr_code && (
-          item.codes.esr_code.startsWith('63') ||
-          item.codes.esr_code.startsWith('64') ||
-          item.codes.esr_code.startsWith('65')
-        ));
+            ...currItem.settlements.reduce(
+              (acc, currItem) => [...acc, ...currItem.stations],
+              []
+            ),
+          ],
+          []
+        )
+        .filter(
+          (item) =>
+            item.transport_type === 'train' &&
+            item.codes.esr_code &&
+            (item.codes.esr_code.startsWith('63') ||
+              item.codes.esr_code.startsWith('64') ||
+              item.codes.esr_code.startsWith('65'))
+        );
 
       setStations(allStations);
     }
@@ -82,6 +94,7 @@ function App() {
 
       if (feature) {
         const station = feature.get('stationInfo');
+        setSelectedStation(station);
         const content = `
           <div>
             <h4>${station.title}</h4>
@@ -101,6 +114,7 @@ function App() {
       const station = stations.find(
         (s) => s.title.toLowerCase() === evtOrStationName.toLowerCase()
       );
+      setSelectedStation(station);
 
       if (station) {
         const content = `
@@ -153,27 +167,43 @@ function App() {
     };
   });
 
-
   return (
     <div className="app-wrapper">
       <header className="app-header">
         <h1>Я.Прибывалка</h1>
+        <div className="toggle-buttons">
+          <button
+            className={`toggle-button ${viewMode === "stations" ? "active" : ""}`}
+            onClick={() => setViewMode("stations")}
+          >
+            Список станций
+          </button>
+          <button
+            className={`toggle-button ${viewMode === "trains" ? "active" : ""}`}
+            onClick={() => setViewMode("trains")}
+          >
+            Поиск поездов
+          </button>
+        </div>
       </header>
 
       <div className="app-container">
+
         <div className="stations-container">
-          <h1>Список станций</h1>
-          <StationsList
-            stations={stations.slice(0, 10)}
-            showOnMapHandler={showOnMapHandler}
-          />
+          {viewMode === "stations" ? (
+            <StationsList stations={stations} showOnMapHandler={showOnMapHandler} />
+          ) : (
+            <TrainSearch stations={stations} />
+          )}
         </div>
+
+        {selectedStation && <TrainStationSchedule station={selectedStation} />}
 
         <div className="map-container">
           <h1>Карта станций</h1>
-          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <MapPopup content={popupContent} />
-            <div ref={mapElement} style={{ width: '100%', height: '100%' }} />
+            <div ref={mapElement} style={{ width: "100%", height: "100%" }} />
           </div>
         </div>
       </div>
